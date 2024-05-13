@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import MainHeader from "@/components/MainHeader";
+import AuthProvider from '../context/AuthProvider';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,17 +20,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen grid grid-cols-12">
-
-          <div className="col-span-3 bg-green-300">
-            <Sidebar/>
+        <AuthProvider>
+          <div className="min-h-screen grid grid-cols-12">
+            <div className="col-span-3 bg-green-300">
+              <Sidebar/>
+            </div>
+            <div className="col-span-9 container">
+              <MainHeader/>
+              <div className="main mt-10">
+                {children}
+              </div>
+            </div>
           </div>
-          <div className="col-span-9 container">
-            {children}
-          </div>
-        </div>
-       
-
+        </AuthProvider>     
       </body>
     </html>
   );

@@ -13,28 +13,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from 'lucide-react'
+import LogoutButton from "./LogoutButton";
+type User = {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  image?: string | null |undefined;
+} | undefined
 
-export function AvatarDemo() {
-  return (
-    <Avatar>
-      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-      <AvatarFallback>CN</AvatarFallback>
-    </Avatar>
-  )
+type Props = {
+  user: User,
+  pagetype: string,
 }
 
-
-const UserAvatar = () => {
+ 
+const UserAvatar = ({user, pagetype}: Props) => {
+  const [firstName] = user?.name ? user.name.split(' ') : [];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='flex items-center gap-3 px-2'>
         <Avatar className='h-8 w-8'>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarImage src={user?.image as string} alt="avatar" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className='flex items-center gap-1 text-sm font-bold'>
-          nathan
+          {firstName}
           <ChevronDown size={15}/>
+
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -43,7 +47,7 @@ const UserAvatar = () => {
         <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuItem>Billing</DropdownMenuItem>
         <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem><LogoutButton/></DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
 
