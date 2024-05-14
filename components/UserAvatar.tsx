@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from 'lucide-react'
 import LogoutButton from "./LogoutButton";
+import { PersonCircle } from "react-bootstrap-icons";
 type User = {
   name?: string | null | undefined;
   email?: string | null | undefined;
@@ -33,7 +34,9 @@ const UserAvatar = ({user, pagetype}: Props) => {
       <DropdownMenuTrigger className='flex items-center gap-3 px-2'>
         <Avatar className='h-8 w-8'>
           <AvatarImage src={user?.image as string} alt="avatar" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>
+            <PersonCircle size={32}/>
+          </AvatarFallback>
         </Avatar>
         <div className='flex items-center gap-1 text-sm font-bold'>
           {firstName}
