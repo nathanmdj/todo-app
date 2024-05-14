@@ -17,13 +17,24 @@ import { Input } from "@/components/ui/input"
 import { signIn } from "next-auth/react"
 import { Github, Google } from 'react-bootstrap-icons'
 import Link from "next/link"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
-  username: z.string().min(4).max(50),
-  password: z.string().min(8).max(50),
+  username: z.string().min(1, 'Email is required'),
+  password: z.string().min(1, 'Password is required').min(8, {
+    message: 'Password must be atleast 8 characters'
+  }).max(50),
+}).refine(data => data.username && data.password, {
+  
 })
 
+
 const LoginForm = () => {
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [username, setUsername] = useState<string >('');
+  const [password, setPassword] = useState<string >('');
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -32,14 +43,36 @@ const LoginForm = () => {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
- 
-    await signIn("credentials", {
-      username: values.username,
-      password: values.password,
-      redirect: true,
-      callbackUrl: "/today"
-    })
+  // const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setUsername(e.target.value);
+  //   setErrorMessage(null);
+  // }
+
+  // const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPassword(e.target.value);
+  //   setErrorMessage(null);
+  // }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    
+    try {
+      const result = await signIn("credentials", {
+        username: values.username,
+        password: values.password,
+        redirect: false,
+        callbackUrl: "/today"
+      });
+      console.log(result?.url);
+      
+      if(result?.ok){
+        console.log('form submitted');
+        setErrorMessage(null);
+        router.push("/today");
+      } else {
+        setErrorMessage("Incorrect username or password");
+      }
+    } catch (error) {
+      
+    }
   }
   return (
     <Form {...form}>
@@ -51,7 +84,9 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="username" {...field} />
+                <Input placeholder="mail@example.com" {...field} 
+                  onChangeCapture={()=>setErrorMessage(null)}
+                />
               </FormControl>
               <FormMessage className="text-xs"/>          
             </FormItem>
@@ -64,17 +99,20 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} type="password"/>
+                <Input placeholder="Enter your password" {...field} 
+                  type="password"
+                  onChangeCapture={()=>setErrorMessage(null)}
+                  />
               </FormControl>
               <FormMessage className="text-xs"/>              
             </FormItem>
           )}
         />
-           
+        <p className="text-red-500 text-xs">{errorMessage ? errorMessage : null}</p>
         <Button type="submit"
           className="w-full"
         >Login</Button>
-        <h1 className="text-center">Or Login Using</h1>
+        <h1 className="mx-auto flex items-center before:mr-4  before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4  after:block after:h-px after:flex-grow after:bg-stone-400">Or Login Using</h1>
         <div className="flex justify-center ">
           <Button 
             type="button"
