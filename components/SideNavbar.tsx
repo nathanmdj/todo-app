@@ -1,7 +1,6 @@
 
 import NavLink from "./NavLink"
 
-
 const SideNavbar = () => {
   const today = new Date()
 

@@ -15,16 +15,10 @@ export const authOptions: NextAuthOptions = {
         password: {  label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        // const res = await fetch("http://localhost:3000/api/login", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json"
-        //   },
-        //   body: JSON.stringify(credentials)
-        // })
-        // const user = await res.json()
-        const user = {id: '1', name: "nathan", email: "j@j.com", password: "password"}
+        const {email} = req.body || {};
+        
+        connectMongoDB();
+        const user = await User.findOne({email});        
 
         if(credentials?.email === user.email && credentials?.password === user.password) {
           return user
@@ -48,22 +42,24 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({user,account}) {
       const{name, email} = user
-
+      
       try {
-        await connectMongoDB();
-
-        const userExists = await User.findOne({email});
-
-        if(!userExists) {
-          await fetch("http://localhost:3000/api/user", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(
-              {name, email}
-            )
-          })
+        if(account?.provider === 'google' || 'github') {
+          await connectMongoDB();
+  
+          const userExists = await User.findOne({email});
+  
+          if(!userExists) {
+            await fetch("http://localhost:3000/api/user", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(
+                {name, email}
+              )
+            })
+          }
         }
       } catch (error) {
         console.log(error);

@@ -1,9 +1,9 @@
-import React from 'react'
 
+import { Sliders2 } from 'react-bootstrap-icons'
 const MainHeader = () => {
   return (
     <div className='fixed top-0'>
-      fasd
+      <Sliders2 size={20}/>
     </div>
   )
 }

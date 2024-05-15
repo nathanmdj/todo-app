@@ -121,7 +121,7 @@ const LoginForm = () => {
           ><Google size={30} /></Button>
         </div>
         <p className="text-xs">Don&apos;t have an account?
-          <Link href={"/signup"} className="text-blue-500"> Sign Up</Link>
+          <Link href={"/register"} className="text-blue-500"> Register</Link>
         </p>
         <Loading isLoading={isLoading}/>
       </form>
