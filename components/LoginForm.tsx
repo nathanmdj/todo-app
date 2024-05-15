@@ -19,44 +19,34 @@ import { Github, Google } from 'react-bootstrap-icons'
 import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Loading from "./Loading"
 
 const formSchema = z.object({
-  username: z.string().min(1, 'Email is required'),
+  email: z.string().min(1, 'Email is required').email({ message: 'Please enter a valid email' }),
   password: z.string().min(1, 'Password is required').min(8, {
     message: 'Password must be atleast 8 characters'
   }).max(50),
-}).refine(data => data.username && data.password, {
-  
 })
 
 
 const LoginForm = () => {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [username, setUsername] = useState<string >('');
-  const [password, setPassword] = useState<string >('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   })
 
-  // const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setUsername(e.target.value);
-  //   setErrorMessage(null);
-  // }
-
-  // const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPassword(e.target.value);
-  //   setErrorMessage(null);
-  // }
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
+    setIsLoading(true);
     try {
       const result = await signIn("credentials", {
-        username: values.username,
+        email: values.email,
         password: values.password,
         redirect: false,
         callbackUrl: "/today"
@@ -66,9 +56,11 @@ const LoginForm = () => {
       if(result?.ok){
         console.log('form submitted');
         setErrorMessage(null);
+        setIsLoading(false);
         router.push("/today");
       } else {
         setErrorMessage("Incorrect username or password");
+        setIsLoading(false);
       }
     } catch (error) {
       
@@ -76,13 +68,13 @@ const LoginForm = () => {
   }
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-[300px] border border-gray-300 p-5 rounded-lg">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 w-[300px] border border-gray-300 p-5 rounded-lg relative">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="mail@example.com" {...field} 
                   onChangeCapture={()=>setErrorMessage(null)}
@@ -117,7 +109,10 @@ const LoginForm = () => {
           <Button 
             type="button"
             className="bg-transparent hover:bg-gray-200 text-black h-12 w-12 rounded-full px-2"
-            onClick={() => signIn('github', { callbackUrl: '/today' })}
+            onClick={() => {
+              signIn('github', { callbackUrl: '/today' })
+              setIsLoading(true)
+            }}
           ><Github size={30} /></Button>
           <Button 
             type="button"
@@ -128,7 +123,9 @@ const LoginForm = () => {
         <p className="text-xs">Don&apos;t have an account?
           <Link href={"/signup"} className="text-blue-500"> Sign Up</Link>
         </p>
+        <Loading isLoading={isLoading}/>
       </form>
+      
     </Form>
   )
 }

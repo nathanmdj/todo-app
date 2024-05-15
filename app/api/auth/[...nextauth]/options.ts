@@ -2,6 +2,8 @@ import type {NextAuthOptions} from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from "next-auth/providers/credentials";
+import { connectMongoDB } from "@/lib/mongodb";
+import User from "@/models/user";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -9,7 +11,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "existing account",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Username", type: "text", placeholder: "jsmith" },
         password: {  label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
@@ -24,7 +26,7 @@ export const authOptions: NextAuthOptions = {
         // const user = await res.json()
         const user = {id: '1', name: "nathan", email: "j@j.com", password: "password"}
 
-        if(credentials?.username === user.name && credentials?.password === user.password) {
+        if(credentials?.email === user.email && credentials?.password === user.password) {
           return user
         } else {
           return null
@@ -42,5 +44,32 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: '/login',
+  },
+  callbacks: {
+    async signIn({user,account}) {
+      const{name, email} = user
+
+      try {
+        await connectMongoDB();
+
+        const userExists = await User.findOne({email});
+
+        if(!userExists) {
+          await fetch("http://localhost:3000/api/user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(
+              {name, email}
+            )
+          })
+        }
+      } catch (error) {
+        console.log(error);
+        
+      }
+      return true;
+    }
   }
 }
