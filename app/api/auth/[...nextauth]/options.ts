@@ -4,6 +4,8 @@ import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
+import { verify } from "@/lib/encrypt";
+import { randomBytes } from "crypto";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -19,8 +21,8 @@ export const authOptions: NextAuthOptions = {
         
         connectMongoDB();
         const user = await User.findOne({email});        
-
-        if(credentials?.email === user.email && credentials?.password === user.password) {
+        const passwordOk = await verify(credentials?.password as string, user?.password as string);
+        if(credentials?.email === user.email && passwordOk) {
           return user
         } else {
           return null
@@ -46,7 +48,7 @@ export const authOptions: NextAuthOptions = {
       try {
         if(account?.provider === 'google' || 'github') {
           await connectMongoDB();
-  
+          const password = randomBytes(16).toString('hex');
           const userExists = await User.findOne({email});
   
           if(!userExists) {
@@ -56,7 +58,7 @@ export const authOptions: NextAuthOptions = {
                 "Content-Type": "application/json"
               },
               body: JSON.stringify(
-                {name, email}
+                {name, email, password}
               )
             })
           }

@@ -2,6 +2,7 @@ import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import { signIn } from "next-auth/react";
 import { NextResponse } from "next/server";
+import encrypt from "@/lib/encrypt";
 
 export async function POST(request:any) {
   const {name, email, password} = await request.json();
@@ -9,7 +10,8 @@ export async function POST(request:any) {
   const userExists = await User.findOne({email});
 
   if(!userExists) { 
-    await User.create({name, email, password});
+    const hashedPassword = await encrypt(password);
+    await User.create({name, email, password: hashedPassword});
     
   } else {
     return NextResponse.json({message: 'User already exists'}, {status: 400});
