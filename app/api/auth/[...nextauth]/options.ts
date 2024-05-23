@@ -6,6 +6,7 @@ import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import { verify } from "@/lib/encrypt";
 import { randomBytes } from "crypto";
+import mongoose from "mongoose";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -20,7 +21,9 @@ export const authOptions: NextAuthOptions = {
         const {email} = req.body || {};
         
         connectMongoDB();
-        const user = await User.findOne({email});        
+        const user = await User.findOne({email}); 
+
+               
         const passwordOk = await verify(credentials?.password as string, user?.password as string);
         if(credentials?.email === user.email && passwordOk) {
           return user
@@ -41,6 +44,9 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/login',
   },
+  session: {
+    strategy: 'jwt'
+  },
   callbacks: {
     async signIn({user,account}) {
       const{name, email} = user
@@ -50,7 +56,7 @@ export const authOptions: NextAuthOptions = {
           await connectMongoDB();
           const password = randomBytes(16).toString('hex');
           const userExists = await User.findOne({email});
-  
+          
           if(!userExists) {
             await fetch("http://localhost:3000/api/user", {
               method: "POST",
@@ -68,6 +74,21 @@ export const authOptions: NextAuthOptions = {
         
       }
       return true;
+    },
+    jwt({token, user, account}) {
+      
+      if(user) {
+        token.user = user
+      }
+      return token
+    },
+    async session({session, token}) {
+      if (session?.user) {
+        session.user.id = token.user.id || token.user._id as string;
+        
+      }
+      
+      return session;
     }
   }
 }

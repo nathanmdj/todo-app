@@ -1,9 +1,19 @@
+import { authOptions } from '@/app/api/auth/[...nextauth]/options'
+import AddTaskForm from '@/components/AddTaskForm'
+import { getServerSession } from 'next-auth/next'
 import React from 'react'
 
 const Today = async() => {
-  await fetch("http://localhost:3000/api/todo/today")
+  const session = await getServerSession(authOptions)
+  // await fetch("http://localhost:3000/api/todo/today")
+  
   return (
-    <div>Today</div>
+    <section>
+      <div className="border-b border-gray-300 pb-3 mb-3">
+        <h1>Today</h1>
+      </div>
+      <AddTaskForm user={session?.user}/>
+    </section>
   )
 }
 

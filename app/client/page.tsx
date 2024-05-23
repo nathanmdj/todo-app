@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import UserAvatar from "@/components/UserAvatar";
 import { signOut } from "next-auth/react";
+import AddTaskForm from "@/components/AddTaskForm";
 const ClientPage = () => {
   const {data: session} = useSession({
     required: true,
@@ -11,10 +12,12 @@ const ClientPage = () => {
       redirect('api/auth/signin?callbackUrl=/client')
     }
   });
-
+  
+  
   return (
     <section>
       <UserAvatar user={session?.user} pagetype={"Client"}/>
+      <AddTaskForm user={session?.user}/>
     </section>
   )
 }

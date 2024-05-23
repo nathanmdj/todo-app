@@ -35,7 +35,8 @@ const UserAvatar = ({user, pagetype}: Props) => {
         <Avatar className='h-8 w-8'>
           <AvatarImage src={user?.image as string} alt="avatar" />
           <AvatarFallback>
-            <PersonCircle size={32}/>
+            {/* <PersonCircle size={32}/> */}
+            {user?.name[0].toLocaleUpperCase() || ''}
           </AvatarFallback>
         </Avatar>
         <div className='flex items-center gap-1 text-sm font-bold'>
