@@ -1,5 +1,5 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/options'
-import AddTaskForm from '@/components/AddTaskForm'
+import AddTaskForm from '@/components/addTaskForm/AddTaskForm'
 import { Toaster } from '@/components/ui/toaster'
 import { getServerSession } from 'next-auth/next'
 import React from 'react'

@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
 import { useState } from "react"
@@ -25,8 +25,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-
-
 const priority = [
   { label: "Priority 1", value: "1", color: 'red-500' },
   { label: "Priority 2", value: "2", color: 'orange-500' },
@@ -34,8 +32,15 @@ const priority = [
   { label: "Priority 4", value: "4", color: 'none' },
 ] as const
 
-const Priority = ({control, name, form}) => {
+type PriorityProps = {
+  control: any;
+  name: string;
+  form: any;
+};
+
+const Priority:React.FC<PriorityProps> = ({control, name, form}) => {
   const [isOpen, setIsOpen] = useState(false)
+  
   return (
     <FormField
       control={control}
@@ -78,7 +83,7 @@ const Priority = ({control, name, form}) => {
                         }}
                         className="hover:cursor-pointer flex justify-between"
                       >
-                        {priority.value === '4' ? <Flag className={`text-${priority.color} `}/> : <FlagFill className={`text-${priority.color} `}/>}
+                        {priority.value === '4' ? <Flag /> : <FlagFill className={`text-${priority.color} `}/>}
                                     
                         {priority.label}
                         <Check

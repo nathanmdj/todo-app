@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import UserAvatar from "@/components/UserAvatar";
 import { signOut } from "next-auth/react";
-import AddTaskForm from "@/components/AddTaskForm";
+import AddTaskForm from "@/components/addTaskForm/AddTaskForm";
 const ClientPage = () => {
   const {data: session} = useSession({
     required: true,
