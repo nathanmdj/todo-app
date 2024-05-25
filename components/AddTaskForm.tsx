@@ -1,53 +1,85 @@
-'use client'
+"use client"
 
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Check, ChevronDown } from "lucide-react"
-import {useState} from "react"
+import { useForm } from "react-hook-form"
+import {  z } from "zod"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {Calendar} from "@/components/ui/calendar"
+
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command"
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+} from "@/components/ui/form"
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { CommandList } from "cmdk"
-import { CalendarEvent, Flag, Plus, PlusCircleFill } from "react-bootstrap-icons"
 
+import { toast } from "@/components/ui/use-toast"
+import { useState } from "react"
+import { Plus, PlusCircleFill } from "react-bootstrap-icons"
+import { Input } from "./ui/input"
+import Priority from "./Priority"
 
-const frameworks = [
-  {
-    value: "inbox",
-    label: "Inbox",
-  },
-  {
-    value: "project-x",
-    label: "Project X",
-  },
-  
-]
+const location = [
+  { label: "Inbox", value: "inbox" },
+  { label: "Project X", value: "project-x" },
+] as const
 
-const AddTaskForm = () => {
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState("inbox")
-  const [date, setDate] = useState(new Date())
-  const [taskName, setTaskName] = useState('')
-  const [description, setDescription] = useState('')
-  const [Priority, setPriority] = useState('')
+const FormSchema = z.object({
+  location: z.string(),
+  taskname: z.string().min(1),
+  description: z.string().min(1),
+  priority: z.string(),
+})
+
+const AddTaskForm2 = () => {
   const [show, setShow] = useState(false)
   const [addTaskIsHover, setAddTaskIsHover] = useState(false)
-  const [isTaskEmpty, setIsTaskEmpty] = useState(true)
+  const [isOpen, setIsOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      location: "inbox",
+      taskname: "",
+      description: "",
+      priority: "4",
+    }
+  })
+
+  const {formState: {isValid}} = form
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    toast({
+      title: "Task added",
+      description: (
+        <pre className="">
+          <code className="">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    })
+
+    setShow(false);
+    form.reset();
+  }
 
   return (
-    <div>
-      <Button
+    <>
+     <Button
         variant="ghost"
         className={`justify-between p-0 gap-2 hover:bg-white hover:text-orange-600 ${show ? 'hidden' : 'flex'}`}
         onClick={() => setShow(true)}
@@ -58,120 +90,124 @@ const AddTaskForm = () => {
         
         <span>Add Task</span>
       </Button>
-      <form className={`border rounded-lg text-sm ${show ? 'block' : 'hidden'}`}>
-        <div className="p-3">
-          <input type="text" placeholder="Task name" 
-            className="block w-full focus:outline-none font-bold"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
-          />
-          <input type="text" placeholder="Description" 
-            className="block w-full focus:outline-none mt-2"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <div className="mt-5 flex gap-3">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant={"outline"}
-                className="text-xs text-green-700 p-2 h-8 flex justify-between gap-2 items-center"
-              >
-                <CalendarEvent/>
-                <span>Today</span>
-              </Button> 
-            </PopoverTrigger>
-            <PopoverContent className="p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-md border"
-                initialFocus
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className={`space-y-6 border rounded-lg ${show ? 'block' : 'hidden'}`}>
+          <div className="p-3">
+            <FormField
+              control={form.control}
+              name="taskname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Task name" {...field} 
+                      className="border-none !ring-transparent p-0 h-8 font-bold"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                  <Input placeholder="Description" {...field} 
+                      className="border-none !ring-transparent p-0 h-8"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex">
+              {/* Priority */}
+              <Priority 
+                control={form.control}
+                name={'priority'}
+                form={form}
               />
-            </PopoverContent>
-          </Popover>
-          <Button
-            type="button"
-            variant={"outline"}
-            className="text-xs p-2 h-8 flex justify-between gap-2 items-center"
-          >
-            <Flag/>
-            <span>Priority</span>
-          </Button>
-        </div>
-        </div>
-        
-        <div className="border-t flex justify-between p-2">
-          <div className="location">
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"ghost"}
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-[100px] justify-between h-8 p-1"
-                >
-                  {frameworks.map((framework)=>(
-                    <span key={framework.value}>
-                      {framework.value === value ? 
-                        framework.label : null                     
-                      }
-                    </span>
-                  ))}
-                  <ChevronDown size={16}/>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search..." />
-                  <CommandEmpty>No project found</CommandEmpty>
-                  <CommandGroup>
-                    <CommandList>
-                      {frameworks?.map((framework) => (
-                        <CommandItem
-                          key={framework.value}
-                          value={framework.value}
-                          onSelect={(currentValue) => {
-                            setValue(currentValue === value ? "" : currentValue)
-                            setOpen(false)
-                          }}
-                          className="hover:bg-stone-200 hover:cursor-pointer"
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              value === framework.value ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {framework.label}
-                          
-                        </CommandItem>
-                      ))}
-                    </CommandList>
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            </div>
           </div>
-          <div className="flex">
+          <div className="flex justify-between border-t p-3" style={{marginTop: '0px'}}>
+          <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <Popover open={isOpen} onOpenChange={setIsOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="ghost"
+                          role="combobox"
+                          className={cn(
+                            "min-w-[120px] justify-between h-8",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? location.find(
+                                (location) => location.value === field.value
+                              )?.label
+                            : "Select location"}
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search location..." />
+                        <CommandEmpty>No location found.</CommandEmpty>
+                        <CommandGroup>
+                          <CommandList>
+                            {location.map((location) => (
+                              <CommandItem
+                                value={location.label}
+                                key={location.value}
+                                onSelect={() => {
+                                  form.setValue("location", location.value)
+                                  setIsOpen(false)
+                                }}
+                                className="hover:cursor-pointer flex justify-between"
+                              >
+                                {location.label}
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    location.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
             <div className="action-btn space-x-2">
-              <Button type="button"
+              <Button 
+                type="button"
                 onClick={() => setShow(false)}
                 className="bg-stone-50 hover:bg-stone-100 text-black h-8"
               >Cancel</Button>
-              <Button type="submit"
-              className={`bg-orange-600 hover:bg-orange-700 h-8 ${isTaskEmpty ? `hover:cursor-not-allowed` : ''}`}
-              disabled={isTaskEmpty}
+              <Button 
+                type="submit"
+                disabled={!isValid}
+                className={`bg-orange-600 hover:bg-orange-700 h-8`}
               >Add Task</Button>
-            </div>
 
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </Form>
+    </>
   )
 }
 
-export default AddTaskForm
+export default AddTaskForm2;

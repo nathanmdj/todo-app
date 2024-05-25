@@ -1,68 +1,104 @@
+'use client'
+
+import { Button } from "./ui/button"
+import { cn } from "@/lib/utils"
+import { Check } from "lucide-react"
+import { useState } from "react"
+import { Flag, FlagFill } from "react-bootstrap-icons"
+
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+
+import {
+  FormControl,
+  FormField,
+  FormItem,
+} from "@/components/ui/form"
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 
-const Priority = () => {
+
+const priority = [
+  { label: "Priority 1", value: "1", color: 'red-500' },
+  { label: "Priority 2", value: "2", color: 'orange-500' },
+  { label: "Priority 3", value: "3", color: 'blue-500' },
+  { label: "Priority 4", value: "4", color: 'none' },
+] as const
+
+const Priority = ({control, name, form}) => {
+  const [isOpen, setIsOpen] = useState(false)
   return (
     <FormField
-    control={form.control}
-    name="priority"
-    render={({ field }) => (
-      <FormItem className="">
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
-            <FormControl>
-              <Button
-                variant="outline"
-                role="combobox"
-                className={cn(
-                  "min-w-[120px] justify-between h-8",
-                  !field.value && "text-muted-foreground"
-                )}
-              >
-                {field.value
-                  ? priority.find(
-                      (priority) => priority.value === field.value
-                    )?.label
-                  : "Select priority"}
-                
-              </Button>
-            </FormControl>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <CommandInput placeholder="Search priority..." />
-              <CommandEmpty>No priority found.</CommandEmpty>
-              <CommandGroup>
-                <CommandList>
-                  {priority.map((priority) => (
-                    <CommandItem
-                      value={priority.label}
-                      key={priority.value}
-                      onSelect={() => {
-                        form.setValue("priority", priority.value)
-                        setIsOpen(false)
-                      }}
-                      className="hover:cursor-pointer"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          priority.value === field.value
-                            ? "opacity-100"
-                            : "opacity-0"
-                        )}
-                      />
-                      {priority.label}
-                    </CommandItem>
-                  ))}
-                </CommandList>
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-        
-      </FormItem>
-    )}
-  />
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className="">
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "min-w-[100px] justify-between h-8 p-2 text-[0.8rem]",
+                    !field.value && "text-muted-foreground"
+                  )}
+                >
+                  {field.value !== '4' ? <FlagFill className={`text-${priority.find((priority) => priority.value === field.value)?.color} `}/> : <Flag/>}
+                             
+                  {field.value
+                    ? priority.find(
+                        (priority) => priority.value === field.value
+                      )?.label
+                    : <><Flag/>Priority</>}
+                  
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="w-[150px] p-0">
+              <Command>
+                <CommandGroup>
+                  <CommandList>
+                    {priority.map((priority) => (
+                      <CommandItem
+                        value={priority.label}
+                        key={priority.value}
+                        onSelect={() => {
+                          form.setValue("priority", priority.value)
+                          setIsOpen(false)
+                        }}
+                        className="hover:cursor-pointer flex justify-between"
+                      >
+                        {priority.value === '4' ? <Flag className={`text-${priority.color} `}/> : <FlagFill className={`text-${priority.color} `}/>}
+                                    
+                        {priority.label}
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            priority.value === field.value
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandList>
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </FormItem>
+      )}
+    />
   )
 }
 
