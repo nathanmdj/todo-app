@@ -62,6 +62,7 @@ const AddTaskForm2 = () => {
   return (
     <>
      <Button
+        type="button"
         variant="ghost"
         className={`justify-between p-0 gap-2 hover:bg-white hover:text-orange-600 ${show ? 'hidden' : 'flex'}`}
         onClick={() => setShow(true)}

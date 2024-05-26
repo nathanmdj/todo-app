@@ -3,16 +3,10 @@
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Flag, FlagFill } from "react-bootstrap-icons"
 import { addDays, format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
 
 import {
   FormControl,
@@ -27,21 +21,21 @@ import {
 } from "@/components/ui/popover"
 import { Calendar } from "../ui/calendar"
 
-const priority = [
-  { label: "Priority 1", value: "1", color: 'red-500' },
-  { label: "Priority 2", value: "2", color: 'orange-500' },
-  { label: "Priority 3", value: "3", color: 'blue-500' },
-  { label: "Priority 4", value: "4", color: 'none' },
-] as const
-
-type PriorityProps = {
+type Props = {
   control: any;
   name: string;
   form: any;
 };
 
-const DueDate:React.FC<PriorityProps> = ({control, name, form}) => {
+const DueDate:React.FC<Props> = ({control, name, form}) => {
   const [isOpen, setIsOpen] = useState(false)
+  
+  const isDisabled = useMemo(() => {
+    const currentDate = addDays(new Date(), -1)
+    return (date: Date) =>  date < currentDate;
+  }, [])
+  
+
   return (
     <FormField
       control={control}
@@ -67,7 +61,7 @@ const DueDate:React.FC<PriorityProps> = ({control, name, form}) => {
                     </Button>
                   </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 h-auto" align="start">
                   <Calendar
                     mode="single"
                     selected={field.value}
@@ -75,6 +69,7 @@ const DueDate:React.FC<PriorityProps> = ({control, name, form}) => {
                       field.onChange(date);
                       setIsOpen(false);
                     }}
+                    disabled={isDisabled}
                     initialFocus
                   />
                 </PopoverContent>
