@@ -8,12 +8,13 @@ const Today = async() => {
   const session = await getServerSession(authOptions)
   // await fetch("http://localhost:3000/api/todo/today")
   
+  
   return (
     <section>
       <div className="border-b border-gray-300 pb-3 mb-3">
         <h1>Today</h1>
       </div>
-      <AddTaskForm/>
+      <AddTaskForm user={session?.user}/>
       <Toaster/>
     </section>
   )

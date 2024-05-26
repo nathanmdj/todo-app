@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import {  date, z } from "zod"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-
+import axios from "axios"
 import {
   Form,
   FormControl,
@@ -30,10 +30,16 @@ const FormSchema = z.object({
   priority: z.string(),
 })
 
-const AddTaskForm2 = () => {
+type User = {
+  name: string 
+  email: string 
+  image?: string 
+  id: string 
+}
+const AddTaskForm2 = ({user} : {user: User}) => {
   const [show, setShow] = useState(false)
   const [addTaskIsHover, setAddTaskIsHover] = useState(false)
-
+  
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -45,7 +51,11 @@ const AddTaskForm2 = () => {
   })
 
   const {formState: {isValid}} = form
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  const onSubmit = async(data: z.infer<typeof FormSchema>) => {
+    const postData = {...data, userId: user.id}
+    console.log(postData);
+    
+    const response = await axios.post("http://localhost:3000/api/todo/addTodo", JSON.stringify(postData))
     toast({
       title: "Task added",
       description: (
@@ -54,7 +64,8 @@ const AddTaskForm2 = () => {
         </pre>
       ),
     })
-
+    console.log(response);
+    
     setShow(false);
     form.reset();
   }

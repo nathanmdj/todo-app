@@ -1,12 +1,12 @@
 import mongoose, {Schema, models} from "mongoose";
 
-const userSchema = new Schema(
+const todoSchema = new Schema(
   {
-    user_id: {
+    userId: {
       type: String,
       required: true,
     }, 
-    name: {
+    taskname: {
       type: String,
       required: true,
     },
@@ -31,5 +31,5 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-const User = models.User || mongoose.model("User", userSchema);
-export default User;
+const Todo = models.Todo || mongoose.model("Todo", todoSchema);
+export default Todo;
