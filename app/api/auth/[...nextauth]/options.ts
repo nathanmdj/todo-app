@@ -6,7 +6,6 @@ import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import { verify } from "@/lib/encrypt";
 import { randomBytes } from "crypto";
-import mongoose from "mongoose";
 
 export const authOptions: NextAuthOptions = {
   providers: [

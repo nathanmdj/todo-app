@@ -1,12 +1,12 @@
 
 
 
-const Todos = () => {
+const Todos = ({todo}:any) => {
   
 
   return (
     <div>
-      <h1>Todos</h1>
+      {todo.taskname}
     </div>
   )
 }
