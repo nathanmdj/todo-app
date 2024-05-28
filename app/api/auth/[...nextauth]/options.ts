@@ -1,9 +1,9 @@
-import type {NextAuthOptions} from "next-auth";
+import type {NextAuthOptions, User} from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectMongoDB } from "@/lib/mongodb";
-import User from "@/models/user";
+import UserModel from "@/models/user";
 import { verify } from "@/lib/encrypt";
 import { randomBytes } from "crypto";
 
@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         const {email} = req.body || {};
         
         connectMongoDB();
-        const user = await User.findOne({email}); 
+        const user = await UserModel.findOne({email}); 
 
                
         const passwordOk = await verify(credentials?.password as string, user?.password as string);
@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
         if(account?.provider === 'google' || 'github') {
           await connectMongoDB();
           const password = randomBytes(16).toString('hex');
-          const userExists = await User.findOne({email});
+          const userExists = await UserModel.findOne({email});
           
           if(!userExists) {
             await fetch("http://localhost:3000/api/user", {
@@ -83,7 +83,9 @@ export const authOptions: NextAuthOptions = {
     },
     async session({session, token}) {
       if (session?.user) {
-        session.user.id = token.user.id || token.user._id as string;
+        const user = token.user as User
+        const sessionUser = session.user as User
+        session.user.id = user.id || user._id as string;
         
       }
       

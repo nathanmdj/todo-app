@@ -21,6 +21,7 @@ import { Input } from "../ui/input"
 import Priority from "./Priority"
 import Location from "./Location"
 import DueDate from "./DueDate"
+import { User } from "next-auth"
 
 const FormSchema = z.object({
   location: z.string(),
@@ -30,12 +31,7 @@ const FormSchema = z.object({
   priority: z.string(),
 })
 
-type User = {
-  name: string 
-  email: string 
-  image?: string 
-  id: string 
-}
+
 const AddTaskForm2 = ({user} : {user: User}) => {
   const [show, setShow] = useState(false)
   const [addTaskIsHover, setAddTaskIsHover] = useState(false)
