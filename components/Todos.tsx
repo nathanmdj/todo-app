@@ -20,8 +20,7 @@ const Todos = ({id}: {id: string}) => {
     return () => {
       todoRef.current = true
     }
-  },[dispatch, id])
-  
+  },[dispatch, id])  
 
   return (
     <div>

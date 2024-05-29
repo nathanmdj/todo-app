@@ -19,12 +19,13 @@ export interface TodoProps {
 }
 
 export interface Entity {
-  date: Date | string;
+  date: string;
   description: string;
   location: string;
   priority: number;
   taskname: string;
   uniqueId: string;
+  completed: boolean;
   id?: string;
   userId?: string;
   _id?: string;

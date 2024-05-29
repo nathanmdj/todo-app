@@ -29,6 +29,11 @@ const todoSchema = new Schema(
     uniqueId: {
       type: String,
       required: true,
+    },
+    completed: {
+      type: Boolean,
+      required: true,
+      default: false
     }
     
   },

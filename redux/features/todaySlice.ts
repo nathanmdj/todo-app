@@ -7,7 +7,6 @@ export const fetchTodos = createAsyncThunk("todos/fetchTodos", async (id:string,
   const headers = id ? { Authorization: id } : {};
   const response = await axios.get("http://localhost:3000/api/todo/today", {headers});
   const data = await response.data;
-  console.log('data',data);
   
   return data;
 })

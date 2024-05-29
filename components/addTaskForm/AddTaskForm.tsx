@@ -54,7 +54,8 @@ const AddTaskForm2 = ({user} : {user: User}) => {
 
   const {formState: {isValid}} = form
   const onSubmit = async(data: z.infer<typeof FormSchema>) => {
-    const postData = {...data, userId: user.id, uniqueId: nanoid()}
+    const postData = {...data, userId: user.id, uniqueId: nanoid(), completed: false}
+ 
     
     const response = await axios.post("http://localhost:3000/api/todo/addTodo", JSON.stringify(postData))
     toast({
@@ -65,7 +66,9 @@ const AddTaskForm2 = ({user} : {user: User}) => {
         </pre>
       ),
     })
-    dispatch(addTodo(postData))
+    const postData2 = {...postData, date: new Date(postData.date).toISOString()}
+    
+    dispatch(addTodo(postData2))
     setShow(false);
     form.reset();
   }

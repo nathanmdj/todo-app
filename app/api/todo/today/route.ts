@@ -7,8 +7,10 @@ export async function GET(request: NextRequest, response: NextResponse) {
   connectMongoDB()
   const todos = await Todo.find({userId: sessionId})
   const filteredTodos = todos.map((todo)=>{
-    const { _id, taskname, description, date, priority, location, userId, uniqueId } = todo
-    return { _id, taskname, description, date, priority, location, userId, uniqueId }
+    const { _id, taskname, description, date, priority, location, userId, uniqueId, completed } = todo
+    console.log('test', typeof date);
+    
+    return { _id, taskname, description, date, priority, location, userId, uniqueId, completed }
   })
   return NextResponse.json(filteredTodos)
 }
