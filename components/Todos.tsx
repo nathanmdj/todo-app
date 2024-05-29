@@ -1,43 +1,41 @@
-import { TodoProps } from "@/types/types"
-import { Checkbox } from "./ui/checkbox"
-import { Inbox } from "react-bootstrap-icons"
+'use client'
 
+import { fetchTodos } from '@/redux/features/todaySlice'
+import { AppDispatch, RootState } from '@/redux/store'
+import React, { useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import TodosCard from './TodosCard'
+import { Todo } from '@/types/types'
+import { CheckCircle } from 'react-bootstrap-icons'
 
-
-const Todos = ({todo}:TodoProps) => {
+const Todos = ({id}: {id: string}) => {
+  const todoRef = useRef(false)
+  const {entities, counter} = useSelector((state: RootState) => state.today)
+  const dispatch = useDispatch<AppDispatch>()
   
-  let checkboxColor = 'black'
-  switch (todo.priority) {
-    case 1:
-      checkboxColor = '!border-red-500  border-2 bg-red-100 text-red-500 hover:bg-red-200'
-      break;
-    case 2:
-      checkboxColor = '!border-orange-500 border-2 bg-orange-100 text-orange-500 hover:bg-orange-200'
-      break;
-    case 3:
-      checkboxColor = '!border-blue-500 bg-blue-100 text-blue-500 hover:bg-blue-200'
-      break;
-    case 4:
-      checkboxColor = '!border-gray-500 ho'
-      break;
-    default:
-  }
+  console.log(entities, counter);
   
+  useEffect(() => {
+    if(todoRef.current === false) {
+      dispatch(fetchTodos(id))      
+    }
+
+    return () => {
+      todoRef.current = true
+    }
+  }, [])
+  
+
   return (
-    <div className="py-2 border-b">
-      <div className="flex items-center gap-2 ">
-        <Checkbox 
-          className={`rounded-full h-5 w-5 ${checkboxColor}`}
-        />
-        <p className="text-sm">{todo.taskname}</p>
+    <div>
+      <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+        <CheckCircle/>
+        <p>{counter} task</p>
+
       </div>
-      <div className="ml-7 text-gray-500 text-sm">
-        <p>{todo.description}</p>
-      </div>
-      <div className="flex justify-end text-[0.8rem] items-center gap-3">
-        <p className="text-gray-500">Inbox</p>
-        <Inbox/>
-      </div>
+      {entities.map((todo: Todo, i : number)=>(
+        <TodosCard key={i} todo={todo}/>
+      ))}
     </div>
   )
 }

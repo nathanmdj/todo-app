@@ -22,6 +22,9 @@ import Priority from "./Priority"
 import Location from "./Location"
 import DueDate from "./DueDate"
 import { User } from "next-auth"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "@/redux/store"
+import { increment } from "@/redux/features/todaySlice"
 
 const FormSchema = z.object({
   location: z.string(),
@@ -35,7 +38,9 @@ const FormSchema = z.object({
 const AddTaskForm2 = ({user} : {user: User}) => {
   const [show, setShow] = useState(false)
   const [addTaskIsHover, setAddTaskIsHover] = useState(false)
-  
+  const {entities, counter} = useSelector((state: RootState) => state.today)
+  const dispatch = useDispatch<AppDispatch>()
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -49,7 +54,6 @@ const AddTaskForm2 = ({user} : {user: User}) => {
   const {formState: {isValid}} = form
   const onSubmit = async(data: z.infer<typeof FormSchema>) => {
     const postData = {...data, userId: user.id}
-    console.log(postData);
     
     const response = await axios.post("http://localhost:3000/api/todo/addTodo", JSON.stringify(postData))
     toast({
@@ -60,8 +64,7 @@ const AddTaskForm2 = ({user} : {user: User}) => {
         </pre>
       ),
     })
-    console.log(response);
-    
+    dispatch(increment())
     setShow(false);
     form.reset();
   }

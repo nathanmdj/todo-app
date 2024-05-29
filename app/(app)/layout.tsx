@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import MainHeader from "@/components/MainHeader";
 import AuthProvider from '../context/AuthProvider';
+import { ReduxProvider } from "@/redux/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
+          <ReduxProvider>
+
+          
           <div className="min-h-screen grid grid-cols-12">
             <div className="col-span-3 bg-green-300">
               <Sidebar/>
@@ -32,6 +36,7 @@ export default function RootLayout({
               </div>
             </div>
           </div>
+          </ReduxProvider>
         </AuthProvider>     
       </body>
     </html>
