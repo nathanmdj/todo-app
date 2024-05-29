@@ -24,7 +24,7 @@ import DueDate from "./DueDate"
 import { User } from "next-auth"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/redux/store"
-import { increment } from "@/redux/features/todaySlice"
+import { addTodo } from "@/redux/features/todaySlice"
 
 const FormSchema = z.object({
   location: z.string(),
@@ -64,7 +64,7 @@ const AddTaskForm2 = ({user} : {user: User}) => {
         </pre>
       ),
     })
-    dispatch(increment())
+    dispatch(addTodo(data))
     setShow(false);
     form.reset();
   }

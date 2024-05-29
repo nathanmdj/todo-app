@@ -19,9 +19,11 @@ const todaySlice = createSlice({
   name: "today",
   initialState,
   reducers: {
-    increment: (state) => {
+    addTodo: (state, action) => {
       state.counter++
-    }
+      state.entities.push(action.payload)
+    },
+   
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.fulfilled, (state, action) => {
@@ -31,5 +33,5 @@ const todaySlice = createSlice({
   }
 });
 
-export const {increment} = todaySlice.actions
+export const {addTodo} = todaySlice.actions
 export default todaySlice.reducer
