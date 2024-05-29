@@ -29,12 +29,12 @@ const TodosCard = ({todo}:TodoProps) => {
         <Checkbox 
           className={`rounded-full h-5 w-5 ${checkboxColor}`}
         />
-        <p className="text-sm">{todo.taskname}</p>
+        <p className="text-[0.8rem]">{todo.taskname}</p>
       </div>
-      <div className="ml-7 text-gray-500 text-sm">
+      <div className="ml-7 text-gray-500 text-xs">
         <p>{todo.description}</p>
       </div>
-      <div className="flex justify-end text-[0.8rem] items-center gap-3">
+      <div className="flex justify-end text-xs items-center gap-3">
         <p className="text-gray-500">Inbox</p>
         <Inbox/>
       </div>

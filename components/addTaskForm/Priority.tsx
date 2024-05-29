@@ -26,10 +26,10 @@ import {
 } from "@/components/ui/popover"
 
 const priority = [
-  { label: "Priority 1", value: "1", color: 'text-red-500' },
-  { label: "Priority 2", value: "2", color: 'text-orange-500' },
-  { label: "Priority 3", value: "3", color: 'text-blue-500' },
-  { label: "Priority 4", value: "4", color: 'none' },
+  { label: "Priority 1", value: 1, color: 'text-red-500' },
+  { label: "Priority 2", value: 2, color: 'text-orange-500' },
+  { label: "Priority 3", value: 3, color: 'text-blue-500' },
+  { label: "Priority 4", value: 4, color: 'none' },
 ] as const
 
 type PriorityProps = {
@@ -58,7 +58,7 @@ const Priority:React.FC<PriorityProps> = ({control, name, form}) => {
                     !field.value && "text-muted-foreground"
                   )}
                 >
-                  {field.value !== '4' ? <FlagFill className={`${priority.find((priority) => priority.value === field.value)?.color} `}/> : <Flag/>}
+                  {field.value !== 4 ? <FlagFill className={`${priority.find((priority) => priority.value === field.value)?.color} `}/> : <Flag/>}
                              
                   {field.value
                     ? priority.find(
@@ -83,7 +83,7 @@ const Priority:React.FC<PriorityProps> = ({control, name, form}) => {
                         }}
                         className="hover:cursor-pointer flex justify-between"
                       >
-                        {priority.value === '4' ? <Flag /> : <FlagFill className={`${priority.color} `}/>}
+                        {priority.value === 4 ? <Flag /> : <FlagFill className={`${priority.color} `}/>}
                                     
                         {priority.label}
                         <Check

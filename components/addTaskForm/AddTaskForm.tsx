@@ -25,13 +25,14 @@ import { User } from "next-auth"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/redux/store"
 import { addTodo } from "@/redux/features/todaySlice"
+import { nanoid } from "@reduxjs/toolkit"
 
 const FormSchema = z.object({
   location: z.string(),
   taskname: z.string().min(1),
   description: z.string().min(1),
   date: z.date(),
-  priority: z.string(),
+  priority: z.number(),
 })
 
 
@@ -47,13 +48,13 @@ const AddTaskForm2 = ({user} : {user: User}) => {
       location: "inbox",
       taskname: "",
       description: "",
-      priority: "4",
+      priority: 4,
     }
   })
 
   const {formState: {isValid}} = form
   const onSubmit = async(data: z.infer<typeof FormSchema>) => {
-    const postData = {...data, userId: user.id}
+    const postData = {...data, userId: user.id, uniqueId: nanoid()}
     
     const response = await axios.post("http://localhost:3000/api/todo/addTodo", JSON.stringify(postData))
     toast({
@@ -64,7 +65,7 @@ const AddTaskForm2 = ({user} : {user: User}) => {
         </pre>
       ),
     })
-    dispatch(addTodo(data))
+    dispatch(addTodo(postData))
     setShow(false);
     form.reset();
   }

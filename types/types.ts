@@ -17,3 +17,15 @@ export interface TodoProps {
     location: string;
   }
 }
+
+export interface Entity {
+  date: Date | string;
+  description: string;
+  location: string;
+  priority: number;
+  taskname: string;
+  uniqueId: string;
+  id?: string;
+  userId?: string;
+  _id?: string;
+}

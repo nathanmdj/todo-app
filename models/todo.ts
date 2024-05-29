@@ -26,6 +26,10 @@ const todoSchema = new Schema(
       type: String,
       required: true,
     },
+    uniqueId: {
+      type: String,
+      required: true,
+    }
     
   },
   { timestamps: true }

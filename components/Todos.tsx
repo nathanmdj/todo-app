@@ -10,24 +10,22 @@ import { CheckCircle } from 'react-bootstrap-icons'
 
 const Todos = ({id}: {id: string}) => {
   const todoRef = useRef(false)
-  const {entities, counter} = useSelector((state: RootState) => state.today)
+  const {entities, counter, isLoading} = useSelector((state: RootState) => state.today)
   const dispatch = useDispatch<AppDispatch>()
-  
-  console.log(entities, counter);
   
   useEffect(() => {
     if(todoRef.current === false) {
       dispatch(fetchTodos(id))      
     }
-
     return () => {
       todoRef.current = true
     }
-  }, [])
+  },[dispatch, id])
   
 
   return (
     <div>
+      
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
         <CheckCircle/>
         <p>{counter} task</p>
