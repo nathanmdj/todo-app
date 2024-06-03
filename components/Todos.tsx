@@ -5,14 +5,20 @@ import { AppDispatch, RootState } from '@/redux/store'
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import TodosCard from './TodosCard'
-import { Todo } from '@/types/types'
+import { Entity, Todo } from '@/types/types'
 import { CheckCircle } from 'react-bootstrap-icons'
 
-const Todos = ({id}: {id: string}) => {
+interface Props {
+  id: string;
+  completed: boolean;
+}
+const Todos = ({id, completed}: Props) => {
   const todoRef = useRef(false)
-  const {entities, counter, isLoading} = useSelector((state: RootState) => state.today)
+  const {entities, counter} = useSelector((state: RootState) => state.today)
   const dispatch = useDispatch<AppDispatch>()
   
+  const filteredTodos = entities.filter((todo: Entity) => todo.completed === completed)
+
   useEffect(() => {
     if(todoRef.current === false) {
       dispatch(fetchTodos(id))      
@@ -22,6 +28,7 @@ const Todos = ({id}: {id: string}) => {
     }
   },[dispatch, id])  
 
+  
   return (
     <div>
       
@@ -30,7 +37,7 @@ const Todos = ({id}: {id: string}) => {
         <p>{counter} task</p>
 
       </div>
-      {entities.map((todo: Todo, i : number)=>(
+      {filteredTodos?.map((todo: Todo, i : number)=>(
         <TodosCard key={i} todo={todo}/>
       ))}
     </div>

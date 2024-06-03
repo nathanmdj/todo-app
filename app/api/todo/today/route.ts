@@ -8,7 +8,6 @@ export async function GET(request: NextRequest, response: NextResponse) {
   const todos = await Todo.find({userId: sessionId})
   const filteredTodos = todos.map((todo)=>{
     const { _id, taskname, description, date, priority, location, userId, uniqueId, completed } = todo
-    console.log('test', typeof date);
     
     return { _id, taskname, description, date, priority, location, userId, uniqueId, completed }
   })

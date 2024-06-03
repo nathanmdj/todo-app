@@ -14,7 +14,11 @@ const Today = async() => {
       <div className="border-b border-gray-300 pb-3 mb-3">
         <h1>Today</h1>
       </div>
-      <Todos id={session?.user?.id || ''}/>
+
+      <Todos 
+        id={session?.user?.id || ''}
+        completed={false}
+      />
       {session?.user && <AddTaskForm user={session.user} />}
       <Toaster/>
     </section>

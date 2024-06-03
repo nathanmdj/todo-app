@@ -29,7 +29,14 @@ const todaySlice = createSlice({
       };
       state.entities.push(newEntity);
     },
-   
+    completed: (state, action) => {
+      state.entities = state.entities.map((entity: Entity) => {
+        if (entity.uniqueId === action.payload) {
+          return { ...entity, completed: true };
+        }
+        return entity;
+      })
+    }   
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.fulfilled, (state, action) => {
@@ -50,5 +57,5 @@ const todaySlice = createSlice({
   }
 });
 
-export const {addTodo} = todaySlice.actions
+export const {addTodo, completed} = todaySlice.actions
 export default todaySlice.reducer
