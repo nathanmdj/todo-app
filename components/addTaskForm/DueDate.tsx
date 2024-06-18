@@ -68,8 +68,10 @@ const DueDate:React.FC<Props> = ({control, name, form}) => {
                     onSelect={(date) => {
                       field.onChange(date);
                       setIsOpen(false);
+                      console.log('due date', date);
+                      
                     }}
-                    disabled={isDisabled}
+                    // disabled={isDisabled}
                     initialFocus
                   />
                 </PopoverContent>
