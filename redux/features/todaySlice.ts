@@ -14,6 +14,7 @@ export const fetchTodos = createAsyncThunk("todos/fetchTodos", async (id:string,
 const initialState = {
   entities: [],
   counter: 0,
+  todayCounter: 0,
   isLoading: true,
 } as any
 
@@ -22,12 +23,16 @@ const todaySlice = createSlice({
   initialState,
   reducers: {
     addTodo: (state, action) => {
-      state.counter++
+     
       const newEntity = {
         id: nanoid(),
         ...action.payload,
       };
       state.entities.push(newEntity);
+      state.counter++
+      if(newEntity.date.split('T')[0] === new Date().toISOString().split('T')[0]) {
+        state.todayCounter++
+      }
     },
     completed: (state, action) => {
       state.entities = state.entities.map((entity: Entity) => {
@@ -36,6 +41,7 @@ const todaySlice = createSlice({
         }
         return entity;
       })
+      state.todayCounter--;
     }   
   },
   extraReducers: (builder) => {
@@ -48,11 +54,20 @@ const todaySlice = createSlice({
       }));
       
       const uniqueEntities = newEntities.filter((entity: Entity) => {
+        console.log(entity.date, new Date().toISOString());
+        
+        if(entity.date.split('T')[0] === new Date().toISOString().split('T')[0]) {
+          state.todayCounter++
+          console.log('redux');
+          
+        }
         return !state.entities.some((existingEntity: Entity) => existingEntity.uniqueId === entity.uniqueId || existingEntity._id === entity._id);
       });
       
       state.entities.push(...uniqueEntities);
       state.counter = action.payload.length
+
+      
     })
   }
 });
