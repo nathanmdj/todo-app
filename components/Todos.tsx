@@ -14,7 +14,7 @@ interface Props {
 }
 const Todos = ({id, completed}: Props) => {
   const todoRef = useRef(false)
-  const {entities, counter} = useSelector((state: RootState) => state.today)
+  const {entities, todayCounter, counter} = useSelector((state: RootState) => state.today)
   const dispatch = useDispatch<AppDispatch>()
   
   const filteredTodos = entities.filter((todo: Entity) => todo.completed === completed)
@@ -28,13 +28,14 @@ const Todos = ({id, completed}: Props) => {
     }
   },[dispatch, id])  
 
+  console.log(todayCounter);
   
   return (
     <div>
       
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
         <CheckCircle/>
-        <p>{counter} task</p>
+        <p>{todayCounter} task</p>
 
       </div>
       {filteredTodos?.map((todo: Todo, i : number)=>(
