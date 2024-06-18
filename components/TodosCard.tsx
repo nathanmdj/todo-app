@@ -26,8 +26,14 @@ const TodosCard = ({todo}:TodoProps) => {
     default:
   }
   // console.log(todo);
-  const handleCompleted = (uniqueId:string) => {
-    dispatch(completed(uniqueId));
+  const handleCompleted = async(uniqueId:string) => {
+    const response = await fetch(`http://localhost:3000/api/todo/completed/${uniqueId}`, {
+      method: 'PATCH',
+    })
+    console.log(response.ok);
+    if(response.ok){
+      dispatch(completed(uniqueId));
+    }
   }
   return (
     <div className="py-2 border-b">
